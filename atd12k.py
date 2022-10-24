@@ -2,6 +2,7 @@ import os
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
+import torch
 import random
 
 class ATD12k(Dataset):

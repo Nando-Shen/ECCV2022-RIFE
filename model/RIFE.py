@@ -26,8 +26,8 @@ class Model:
         self.epe = EPE()
         self.lap = LapLoss()
         self.sobel = SOBEL()
-        if local_rank != -1:
-            self.flownet = DDP(self.flownet, device_ids=[local_rank], output_device=local_rank)
+        # if local_rank != -1:
+        #     self.flownet = DDP(self.flownet, device_ids=[local_rank], output_device=local_rank)
 
     def train(self):
         self.flownet.train()

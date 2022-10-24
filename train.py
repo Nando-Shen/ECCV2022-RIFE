@@ -97,7 +97,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     loss_tea_list = []
     psnr_list = []
     psnr_list_teacher = []
-    time_stamp = time.time()
+    # time_stamp = time.time()
     for i, data in enumerate(val_data):
         data_gpu = data
         data_gpu = data_gpu.to(device, non_blocking=True) / 255.        
@@ -126,7 +126,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
                 writer_val.add_image(str(j) + '/img', imgs.copy(), nr_eval, dataformats='HWC')
                 writer_val.add_image(str(j) + '/flow', flow2rgb(flow0[j][:, :, ::-1]), nr_eval, dataformats='HWC')
     
-    eval_time_interval = time.time() - time_stamp
+    # eval_time_interval = time.time() - time_stamp
 
     if local_rank != 0:
         return

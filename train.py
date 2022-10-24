@@ -54,7 +54,7 @@ def train(model, local_rank):
     for epoch in range(args.epoch):
         # sampler.set_epoch(epoch)
         print('Epoch: {}'.format(epoch))
-        # evaluate(model, val_data, step, local_rank, writer_val, val_length)
+        evaluate(model, val_data, step, local_rank, writer_val)
         for i, data in enumerate(train_data):
             data_time_interval = time.time() - time_stamp
             time_stamp = time.time()
@@ -89,10 +89,10 @@ def train(model, local_rank):
             step += 1
         nr_eval += 1
         if nr_eval % 5 == 0:
-            evaluate(model, val_data, step, local_rank, writer_val, val_length)
+            evaluate(model, val_data, step, local_rank, writer_val)
         model.save_model(log_path, local_rank)    
 
-def evaluate(model, val_data, nr_eval, local_rank, writer_val, val_length):
+def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     loss_l1_list = []
     loss_distill_list = []
     loss_tea_list = []
@@ -134,7 +134,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val, val_length):
         return
     ppsnr = np.array(psnr_list).mean()
     ppsnr_teacher = np.array(psnr_list_teacher).mean()
-    sssim = ssim / val_length
+    sssim = ssim / len(val_data)
     writer_val.add_scalar('psnr', ppsnr, nr_eval)
     writer_val.add_scalar('psnr_teacher', ppsnr_teacher, nr_eval)
     writer_val.add_scalar('ssim', sssim, nr_eval)

@@ -54,7 +54,6 @@ def train(model, local_rank):
     for epoch in range(args.epoch):
         # sampler.set_epoch(epoch)
         print('Epoch: {}'.format(epoch))
-        evaluate(model, val_data, step, local_rank, writer_val)
         for i, data in enumerate(train_data):
             data_time_interval = time.time() - time_stamp
             time_stamp = time.time()
@@ -97,6 +96,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     loss_distill_list = []
     loss_tea_list = []
     psnr_list = []
+    ssim_list = []
     psnr_list_teacher = []
     # time_stamp = time.time()
     for i, data in enumerate(val_data):
@@ -115,7 +115,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
             psnr_list.append(psnr)
             psnr = -10 * math.log10(torch.mean((merged_img[j] - gt[j]) * (merged_img[j] - gt[j])).cpu().data)
             psnr_list_teacher.append(psnr)
-        ssim = ssim_matlab(gt, pred, val_range=1.)
+        ssim_list.append(ssim_matlab(gt, pred, val_range=1.))
         gt = (gt.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')
         pred = (pred.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')
         merged_img = (merged_img.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')
@@ -131,9 +131,14 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
 
     if local_rank != 0:
         return
-    writer_val.add_scalar('psnr', np.array(psnr_list).mean(), nr_eval)
-    writer_val.add_scalar('psnr_teacher', np.array(psnr_list_teacher).mean(), nr_eval)
-    writer_val.add_scalar('ssim', ssim, nr_eval)
+    ppsnr = np.array(psnr_list).mean()
+    ppsnr_teacher = np.array(psnr_list_teacher).mean()
+    sssim = np.array(ssim_list).mean()
+    writer_val.add_scalar('psnr', ppsnr, nr_eval)
+    writer_val.add_scalar('psnr_teacher', ppsnr_teacher, nr_eval)
+    writer_val.add_scalar('ssim', sssim, nr_eval)
+    print("Epoch: ", nr_eval)
+    print("ValPSNR: %0.4f ValPSNR_TEA: %0.4f ValSSIM: %0.4f" % (ppsnr, ppsnr_teacher, sssim))
         
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser()

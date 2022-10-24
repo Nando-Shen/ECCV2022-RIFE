@@ -56,7 +56,7 @@ def train(model, local_rank):
     for epoch in range(args.epoch):
         # sampler.set_epoch(epoch)
         print('Epoch: {}'.format(epoch))
-        evaluate(model, val_data, step, local_rank, writer_val)
+        # evaluate(model, val_data, step, local_rank, writer_val)
         for i, data in enumerate(train_data):
             data_time_interval = time.time() - time_stamp
             time_stamp = time.time()
@@ -100,7 +100,6 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     loss_tea_list = []
     psnr_list = []
     ssim = 0
-    psnrr = 0
     psnr_list_teacher = []
     # time_stamp = time.time()
     print('Start evaluate')
@@ -115,8 +114,6 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
         loss_l1_list.append(info['loss_l1'].cpu().numpy())
         loss_tea_list.append(info['loss_tea'].cpu().numpy())
         loss_distill_list.append(info['loss_distill'].cpu().numpy())
-        MSE_val = MSE_LossFn(pred, gt)
-        psnrr += (10 * math.log10(1 / MSE_val.item()))
         for j in range(gt.shape[0]):
             psnr = -10 * math.log10(torch.mean((gt[j] - pred[j]) * (gt[j] - pred[j])).cpu().data)
             psnr_list.append(psnr)
@@ -141,12 +138,11 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     ppsnr = np.array(psnr_list).mean()
     ppsnr_teacher = np.array(psnr_list_teacher).mean()
     sssim = ssim / len(val_data)
-    psnrr = psnrr / len(val_data)
     writer_val.add_scalar('psnr', ppsnr, nr_eval)
     writer_val.add_scalar('psnr_teacher', ppsnr_teacher, nr_eval)
     writer_val.add_scalar('ssim', sssim, nr_eval)
     print("Epoch: ", nr_eval)
-    print("ValPSNR: %0.4f ValPSNR_TEA: %0.4f ValSSIM: %0.4f ValPSNRR: %0.4f" % (ppsnr, ppsnr_teacher, sssim, psnrr))
+    print("ValPSNR: %0.4f ValPSNR_TEA: %0.4f ValSSIM: %0.4f ValPSNRR: %0.4f" % (ppsnr, ppsnr_teacher, sssim))
         
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser()

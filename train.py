@@ -61,6 +61,7 @@ def train(model, local_rank):
             data_gpu = data
             data_gpu = data_gpu.to(device, non_blocking=True) / 255.
             imgs = data_gpu[:, :6]
+            print(imgs.size())
             gt = data_gpu[:, 6:9]
             learning_rate = get_learning_rate(step)
             pred, info = model.update(imgs, gt, learning_rate, training=True) # pass timestep if you are training RIFEm

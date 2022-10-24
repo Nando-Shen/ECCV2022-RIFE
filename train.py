@@ -53,7 +53,8 @@ def train(model, local_rank):
     print('training...')
     time_stamp = time.time()
     for epoch in range(args.epoch):
-        sampler.set_epoch(epoch)
+        # sampler.set_epoch(epoch)
+        print('Epoch: {}'.format(epoch))
         for i, data in enumerate(train_data):
             data_time_interval = time.time() - time_stamp
             time_stamp = time.time()

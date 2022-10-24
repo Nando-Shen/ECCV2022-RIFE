@@ -97,7 +97,6 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     loss_tea_list = []
     psnr_list = []
     psnr_list_teacher = []
-    ssim_list = []
     time_stamp = time.time()
     for i, data in enumerate(val_data):
         data_gpu = data
@@ -115,14 +114,12 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
             psnr_list.append(psnr)
             psnr = -10 * math.log10(torch.mean((merged_img[j] - gt[j]) * (merged_img[j] - gt[j])).cpu().data)
             psnr_list_teacher.append(psnr)
-            ssim = ssim_matlab(gt[j], pred[j], val_range=1.)
-            ssim_list.append(ssim)
-
+        ssim = ssim_matlab(gt, pred, val_range=1.)
         gt = (gt.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')
         pred = (pred.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')
         merged_img = (merged_img.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')
         flow0 = info['flow'].permute(0, 2, 3, 1).cpu().numpy()
-        flow1 = info['flow_tea'].permute(0, 2, 3, 1).cpu().numpy()
+        # flow1 = info['flow_tea'].permute(0, 2, 3, 1).cpu().numpy()
         if i == 0 and local_rank == 0:
             for j in range(10):
                 imgs = np.concatenate((merged_img[j], pred[j], gt[j]), 1)[:, :, ::-1]
@@ -135,7 +132,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
         return
     writer_val.add_scalar('psnr', np.array(psnr_list).mean(), nr_eval)
     writer_val.add_scalar('psnr_teacher', np.array(psnr_list_teacher).mean(), nr_eval)
-    writer_val.add_scalar('ssim', np.array(ssim_list).mean(), nr_eval)
+    writer_val.add_scalar('ssim', ssim, nr_eval)
         
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser()

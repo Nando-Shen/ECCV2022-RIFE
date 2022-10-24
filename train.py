@@ -142,6 +142,8 @@ if __name__ == "__main__":
     parser.add_argument('--epoch', default=30, type=int)
     parser.add_argument('--batch_size', default=16, type=int, help='minibatch size')
     parser.add_argument('--local_rank', default=0, type=int, help='local rank')
+    parser.add_argument('--train', type=string, help='dataset')
+
     args = parser.parse_args()
     torch.cuda.set_device(args.local_rank)
     seed = 1234

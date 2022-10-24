@@ -13,6 +13,8 @@ from atd12k import get_loader
 from utils.pytorch_msssim import ssim_matlab
 
 device = torch.device("cuda")
+MSE_LossFn = torch.nn.MSELoss()
+
 
 log_path = 'train_log'
 
@@ -113,7 +115,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
         loss_l1_list.append(info['loss_l1'].cpu().numpy())
         loss_tea_list.append(info['loss_tea'].cpu().numpy())
         loss_distill_list.append(info['loss_distill'].cpu().numpy())
-        MSE_val = torch.nn.MSE_Loss(pred, gt)
+        MSE_val = MSE_LossFn(pred, gt)
         psnrr += (10 * math.log10(1 / MSE_val.item()))
         for j in range(gt.shape[0]):
             psnr = -10 * math.log10(torch.mean((gt[j] - pred[j]) * (gt[j] - pred[j])).cpu().data)

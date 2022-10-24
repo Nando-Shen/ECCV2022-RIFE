@@ -84,7 +84,7 @@ def train(model, local_rank):
             #         writer.add_image(str(i) + '/flow', np.concatenate((flow2rgb(flow0[i]), flow2rgb(flow1[i])), 1), step, dataformats='HWC')
             #         writer.add_image(str(i) + '/mask', mask[i], step, dataformats='HWC')
             #     writer.flush()
-            if local_rank == 0:
+            if local_rank == 0 and i%100==0:
                 print('epoch:{} {}/{} time:{:.2f}+{:.2f} loss_l1:{:.4e}'.format(epoch, i, args.step_per_epoch, data_time_interval, train_time_interval, info['loss_l1']))
             step += 1
         nr_eval += 1

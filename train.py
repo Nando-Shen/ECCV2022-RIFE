@@ -99,7 +99,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     ssim_list = []
     time_stamp = time.time()
     for i, data in enumerate(val_data):
-        data_gpu, timestep = data
+        data_gpu = data
         data_gpu = data_gpu.to(device, non_blocking=True) / 255.        
         imgs = data_gpu[:, :6]
         gt = data_gpu[:, 6:9]

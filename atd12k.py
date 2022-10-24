@@ -78,6 +78,7 @@ class ATD12k(Dataset):
             images = [T(img_) for img_ in images]
 
             images = images[:3]
+            print(images.size)
             img0 = images[0].permute(2, 0, 1)
             img1 = images[2].permute(2, 0, 1)
             gt = images[1].permute(2, 0, 1)

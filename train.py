@@ -10,6 +10,7 @@ from model.RIFE import Model
 from torch.utils.data import DataLoader, Dataset
 from tensorboardX import SummaryWriter
 from atd12k import get_loader
+from utils.pytorch_msssim import ssim_matlab
 
 device = torch.device("cuda")
 
@@ -86,7 +87,7 @@ def train(model, local_rank):
                 print('epoch:{} {}/{} time:{:.2f}+{:.2f} loss_l1:{:.4e}'.format(epoch, i, args.step_per_epoch, data_time_interval, train_time_interval, info['loss_l1']))
             step += 1
         nr_eval += 1
-        if nr_eval % 5 == 0:
+        if nr_eval % 1 == 0:
             evaluate(model, val_data, step, local_rank, writer_val)
         model.save_model(log_path, local_rank)    
 

@@ -142,7 +142,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     writer_val.add_scalar('psnr_teacher', ppsnr_teacher, nr_eval)
     writer_val.add_scalar('ssim', sssim, nr_eval)
     print("Epoch: ", nr_eval)
-    print("ValPSNR: %0.4f ValPSNR_TEA: %0.4f ValSSIM: %0.4f ValPSNRR: %0.4f" % (ppsnr, ppsnr_teacher, sssim))
+    print("ValPSNR: %0.4f ValPSNR_TEA: %0.4f ValSSIM: %0.4f" % (ppsnr, ppsnr_teacher, sssim))
         
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser()

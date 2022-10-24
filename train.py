@@ -138,7 +138,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
         
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser()
-    parser.add_argument('--epoch', default=30, type=int)
+    parser.add_argument('--epoch', default=200, type=int)
     parser.add_argument('--batch_size', default=16, type=int, help='minibatch size')
     parser.add_argument('--local_rank', default=0, type=int, help='local rank')
     parser.add_argument('--train', type=str, default=None, help='dataset')

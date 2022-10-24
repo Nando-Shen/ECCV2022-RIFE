@@ -69,18 +69,18 @@ class ATD12k(Dataset):
             images = images_
 
             images = images[:3]
-            img0 = torch.from_numpy(images[0].copy()).permute(2, 0, 1)
-            img1 = torch.from_numpy(images[2].copy()).permute(2, 0, 1)
-            gt = torch.from_numpy(images[1].copy()).permute(2, 0, 1)
+            img0 = images[0].permute(2, 0, 1)
+            img1 = images[2].permute(2, 0, 1)
+            gt = images[1].permute(2, 0, 1)
             return torch.cat((img0, img1, gt), 0)
         else:
             T = self.transforms
             images = [T(img_) for img_ in images]
 
             images = images[:3]
-            img0 = torch.from_numpy(images[0].copy()).permute(2, 0, 1)
-            img1 = torch.from_numpy(images[2].copy()).permute(2, 0, 1)
-            gt = torch.from_numpy(images[1].copy()).permute(2, 0, 1)
+            img0 = images[0].permute(2, 0, 1)
+            img1 = images[2].permute(2, 0, 1)
+            gt = images[1].permute(2, 0, 1)
             return torch.cat((img0, img1, gt), 0)
 
     def __len__(self):

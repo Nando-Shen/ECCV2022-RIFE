@@ -1,0 +1,106 @@
+import os
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
+from PIL import Image
+import random
+
+class ATD12k(Dataset):
+    def __init__(self, data_root, is_training , input_frames="1357", mode='mini'):
+        """
+        Creates a Vimeo Septuplet object.
+        Inputs.
+            data_root: Root path for the Vimeo dataset containing the sep tuples.
+            is_training: Train/Test.
+            input_frames: Which frames to input for frame interpolation network.
+        """
+        self.data_root = data_root
+
+        self.training = is_training
+        self.inputs = input_frames
+        if is_training:
+            self.data_root = os.path.join(self.data_root, 'train_10k')
+        else:
+            self.data_root = os.path.join(self.data_root, 'test_2k_540p')
+
+        dirs = os.listdir(self.data_root)
+        data_list = []
+        for d in dirs:
+            if d == '.DS_Store':
+                continue
+            img0 = os.path.join(self.data_root, d, 'frame1.jpg')
+            img1 = os.path.join(self.data_root, d, 'frame3.jpg')
+            gt = os.path.join(self.data_root, d, 'frame2.jpg')
+            data_list.append([img0, gt, img1, d])
+
+        self.data_list = data_list
+
+        if self.training:
+            self.transforms = transforms.Compose([
+                # transforms.RandomCrop(228),
+                transforms.RandomHorizontalFlip(),
+                # transforms.ColorJitter(0.05, 0.05, 0.05, 0.05),
+                transforms.ToTensor()
+            ])
+        else:
+            self.transforms = transforms.Compose([
+                transforms.ToTensor()
+            ])
+
+    def __getitem__(self, index):
+
+        imgpaths = [self.data_list[index][0], self.data_list[index][1], self.data_list[index][2]]
+
+        # Load images
+        images = [Image.open(pth) for pth in imgpaths]
+
+        ## Select only relevant inputs
+        # inputs = [int(e)-1 for e in list(self.inputs)]
+        # inputs = inputs[:len(inputs)//2] + [3] + inputs[len(inputs)//2:]
+        # images = [images[i] for i in inputs]
+        # imgpaths = [imgpaths[i] for i in inputs]
+        # Data augmentation
+        if self.training:
+            seed = random.randint(0, 2**32)
+            images_ = []
+            for img_ in images:
+                random.seed(seed)
+                images_.append(self.transforms(img_))
+            images = images_
+
+            images = images[:3]
+            img0 = torch.from_numpy(images[0].copy()).permute(2, 0, 1)
+            img1 = torch.from_numpy(images[2].copy()).permute(2, 0, 1)
+            gt = torch.from_numpy(images[1].copy()).permute(2, 0, 1)
+            return torch.cat((img0, img1, gt), 0)
+        else:
+            T = self.transforms
+            images = [T(img_) for img_ in images]
+
+            images = images[:3]
+            img0 = torch.from_numpy(images[0].copy()).permute(2, 0, 1)
+            img1 = torch.from_numpy(images[2].copy()).permute(2, 0, 1)
+            gt = torch.from_numpy(images[1].copy()).permute(2, 0, 1)
+            return torch.cat((img0, img1, gt), 0)
+
+    def __len__(self):
+        if self.training:
+            return len(self.data_list)
+        else:
+            return len(self.data_list)
+            # return 1
+
+def get_loader(mode, data_root, batch_size, shuffle, test_mode=None):
+    if mode == 'train':
+        is_training = True
+    else:
+        is_training = False
+    dataset = ATD12k(data_root, is_training=is_training)
+    print("{} samples loaded".format(len(dataset)))
+    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, pin_memory=True), len(dataset)
+
+
+if __name__ == "__main__":
+
+    dataset = ATD12k("/Users/shenjiaming/Documents/2022 S1/ELEC4712/MySuperGlue/atd12k_points", is_training=False)
+    # print(dataset[0])
+    dataloader = DataLoader(dataset, batch_size=100, shuffle=False, num_workers=32, pin_memory=True)

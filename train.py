@@ -8,7 +8,7 @@ import argparse
 
 from model.RIFE import Model
 from torch.utils.data import DataLoader, Dataset
-from torch.utils.tensorboard import SummaryWriter
+from tensorboardX import SummaryWriter
 from atd12k import get_loader
 
 device = torch.device("cuda")

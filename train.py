@@ -1,5 +1,4 @@
 import os
-import cv2
 import math
 import time
 import torch
@@ -8,7 +7,6 @@ import random
 import argparse
 
 from model.RIFE import Model
-from dataset import *
 from torch.utils.data import DataLoader, Dataset
 from torch.utils.tensorboard import SummaryWriter
 from atd12k import get_loader

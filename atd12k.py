@@ -69,7 +69,6 @@ class ATD12k(Dataset):
             images = images_
 
             images = images[:3]
-            print(images[1].size())
             img0 = images[0]
             img1 = images[2]
             gt = images[1]
@@ -80,9 +79,9 @@ class ATD12k(Dataset):
 
             images = images[:3]
 
-            img0 = images[0].permute(2, 0, 1)
-            img1 = images[2].permute(2, 0, 1)
-            gt = images[1].permute(2, 0, 1)
+            img0 = images[0]
+            img1 = images[2]
+            gt = images[1]
             return torch.cat((img0, img1, gt), 0)
 
     def __len__(self):

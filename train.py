@@ -122,7 +122,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
             psnr = -10 * math.log10(torch.mean((merged_img[j] - gt[j]) * (merged_img[j] - gt[j])).cpu().data)
             psnr_list_teacher.append(psnr)
         MSE_val = MSE_LossFn(pred, gt)
-        psnrr += (10 * log10(1 / MSE_val.item()))
+        psnrr += (10 * math.log10(1 / MSE_val.item()))
         ssim += ssim_matlab(gt.clamp(0, 1), pred.clamp(0, 1), val_range=1.)
         gt = (gt.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')
         pred = (pred.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')

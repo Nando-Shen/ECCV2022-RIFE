@@ -62,6 +62,7 @@ def train(model, local_rank):
             time_stamp = time.time()
             data_gpu = data
             data_gpu = data_gpu.to(device, non_blocking=True) / 255.
+            print(data_gpu.size)
             imgs = data_gpu[:, :6]
             gt = data_gpu[:, 6:9]
             learning_rate = get_learning_rate(step)
@@ -105,7 +106,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     print('Start evaluate')
     for i, data in enumerate(val_data):
         data_gpu = data
-        data_gpu = data_gpu.to(device, non_blocking=True) / 255.        
+        data_gpu = data_gpu.to(device, non_blocking=True) / 255.
         imgs = data_gpu[:, :6]
         gt = data_gpu[:, 6:9]
         with torch.no_grad():

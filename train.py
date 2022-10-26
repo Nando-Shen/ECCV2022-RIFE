@@ -56,7 +56,7 @@ def train(model, local_rank):
     for epoch in range(args.epoch):
         # sampler.set_epoch(epoch)
         print('Epoch: {}'.format(epoch))
-        # evaluate(model, val_data, step, local_rank, writer_val)
+        evaluate(model, val_data, step, local_rank, writer_val)
         for i, data in enumerate(train_data):
             data_time_interval = time.time() - time_stamp
             time_stamp = time.time()
@@ -106,7 +106,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     print('Start evaluate')
     for i, data in enumerate(val_data):
         data_gpu = data
-        data_gpu = data_gpu.to(device, non_blocking=True) / 255.
+        data_gpu = data_gpu.to(device, non_blocking=True)
         imgs = data_gpu[:, :6]
         gt = data_gpu[:, 6:9]
         with torch.no_grad():

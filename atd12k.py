@@ -72,7 +72,7 @@ class ATD12k(Dataset):
             img0 = images[0]
             img1 = images[2]
             gt = images[1]
-            return torch.cat((img0, img1, gt), 1)
+            return torch.cat((img0, img1, gt), 0)
         else:
             T = self.transforms
             images = [T(img_) for img_ in images]
@@ -82,7 +82,7 @@ class ATD12k(Dataset):
             img0 = images[0]
             img1 = images[2]
             gt = images[1]
-            return torch.cat((img0, img1, gt), 1)
+            return torch.cat((img0, img1, gt), 0)
 
     def __len__(self):
         if self.training:

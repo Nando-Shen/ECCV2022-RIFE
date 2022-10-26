@@ -61,7 +61,7 @@ def train(model, local_rank):
             data_time_interval = time.time() - time_stamp
             time_stamp = time.time()
             data_gpu = data
-            data_gpu = data_gpu.to(device, non_blocking=True) / 255.
+            data_gpu = data_gpu.to(device, non_blocking=True)
             print(data_gpu)
             imgs = data_gpu[:, :6]
             gt = data_gpu[:, 6:9]

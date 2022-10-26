@@ -56,13 +56,13 @@ def train(model, local_rank):
     for epoch in range(args.epoch):
         # sampler.set_epoch(epoch)
         print('Epoch: {}'.format(epoch))
-        # evaluate(model, val_data, step, local_rank, writer_val)
+        evaluate(model, val_data, step, local_rank, writer_val)
         for i, data in enumerate(train_data):
             data_time_interval = time.time() - time_stamp
             time_stamp = time.time()
             data_gpu = data
             data_gpu = data_gpu.to(device, non_blocking=True)
-            print(data_gpu)
+            # print(data_gpu)
             imgs = data_gpu[:, :6]
             gt = data_gpu[:, 6:9]
             learning_rate = get_learning_rate(step)

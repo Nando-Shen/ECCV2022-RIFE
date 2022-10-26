@@ -56,7 +56,7 @@ def train(model, local_rank):
     for epoch in range(args.epoch):
         # sampler.set_epoch(epoch)
         print('Epoch: {}'.format(epoch))
-        evaluate(model, val_data, step, local_rank, writer_val)
+        # evaluate(model, val_data, step, local_rank, writer_val)
         for i, data in enumerate(train_data):
             data_time_interval = time.time() - time_stamp
             time_stamp = time.time()
@@ -131,7 +131,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
                 imgs = np.concatenate((merged_img[j], pred[j], gt[j]), 1)[:, :, ::-1]
                 writer_val.add_image(str(j) + '/img', imgs.copy(), nr_eval, dataformats='HWC')
                 writer_val.add_image(str(j) + '/flow', flow2rgb(flow0[j][:, :, ::-1]), nr_eval, dataformats='HWC')
-    
+
     # eval_time_interval = time.time() - time_stamp
 
     if local_rank != 0:

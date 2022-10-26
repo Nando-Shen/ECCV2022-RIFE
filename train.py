@@ -21,7 +21,7 @@ log_path = 'train_log'
 def get_learning_rate(step):
     if step < 2000:
         mul = step / 2000.
-        return 3e-4 * mul
+        return 5e-4 * mul
     else:
         mul = np.cos((step - 2000) / (args.epoch * args.step_per_epoch - 2000.) * math.pi) * 0.5 + 0.5
         return (3e-4 - 3e-6) * mul + 3e-6
@@ -102,6 +102,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     psnr_list = []
     ssim = 0
     psnr_list_teacher = []
+    psnrr = 0
     # time_stamp = time.time()
     print('Start evaluate')
     for i, data in enumerate(val_data):
@@ -120,7 +121,9 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
             psnr_list.append(psnr)
             psnr = -10 * math.log10(torch.mean((merged_img[j] - gt[j]) * (merged_img[j] - gt[j])).cpu().data)
             psnr_list_teacher.append(psnr)
-        ssim += ssim_matlab(gt, pred, val_range=1.)
+        MSE_val = MSE_LossFn(pred, gt)
+        psnrr += (10 * log10(1 / MSE_val.item()))
+        ssim += ssim_matlab(gt.clamp(0, 1), pred.clamp(0, 1), val_range=1.)
         gt = (gt.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')
         pred = (pred.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')
         merged_img = (merged_img.permute(0, 2, 3, 1).cpu().numpy() * 255).astype('uint8')
@@ -139,11 +142,13 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
     ppsnr = np.array(psnr_list).mean()
     ppsnr_teacher = np.array(psnr_list_teacher).mean()
     sssim = ssim / len(val_data)
+    ppsnrr = psnrr / len(val_data)
     writer_val.add_scalar('psnr', ppsnr, nr_eval)
     writer_val.add_scalar('psnr_teacher', ppsnr_teacher, nr_eval)
     writer_val.add_scalar('ssim', sssim, nr_eval)
+    writer_val.add_scalar('psnrr', ppsnrr, nr_eval)
     print("Epoch: ", nr_eval)
-    print("ValPSNR: %0.4f ValPSNR_TEA: %0.4f ValSSIM: %0.4f" % (ppsnr, ppsnr_teacher, sssim))
+    print("ValPSNR: %0.4f ValPSNR_TEA: %0.4f ValSSIM: %0.4f, ValPSNRR: %0.4f" % (ppsnr, ppsnr_teacher, sssim, ppsnrr))
         
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser()

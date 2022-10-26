@@ -62,7 +62,7 @@ def train(model, local_rank):
             time_stamp = time.time()
             data_gpu = data
             data_gpu = data_gpu.to(device, non_blocking=True) / 255.
-            print(data_gpu.data())
+            print(data_gpu)
             imgs = data_gpu[:, :6]
             gt = data_gpu[:, 6:9]
             learning_rate = get_learning_rate(step)

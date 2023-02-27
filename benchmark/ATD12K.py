@@ -16,15 +16,15 @@ model.load_model('train_log')
 model.eval()
 model.device()
 
-path = 'datasets/test_2k_540p/'
+path = '/project/VUR/jshe2377/atd12k_points/test_2k_540p/'
 dirs = os.listdir(path)
 psnr_list = []
 ssim_list = []
 print(len(dirs))
 for d in dirs:
-    img0 = (path + d + '/frame1.png')
-    img1 = (path + d + '/frame3.png')
-    gt = (path + d + '/frame2.png')
+    img0 = (path + d + '/frame1.jpg')
+    img1 = (path + d + '/frame3.jpg')
+    gt = (path + d + '/frame2.jpg')
     img0 = (torch.tensor(cv2.imread(img0).transpose(2, 0, 1) / 255.)).to(device).float().unsqueeze(0)
     img1 = (torch.tensor(cv2.imread(img1).transpose(2, 0, 1) / 255.)).to(device).float().unsqueeze(0)
     gt = (torch.tensor(cv2.imread(gt).transpose(2, 0, 1) / 255.)).to(device).float().unsqueeze(0)

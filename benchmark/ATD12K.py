@@ -16,7 +16,7 @@ model.load_model('train_log')
 model.eval()
 model.device()
 
-path = '/project/VUR/jshe2377/atd12k_points/test_2k_540p/'
+path = '/content/drive/MyDrive/atd12k_points/test_2k_540p/'
 dirs = os.listdir(path)
 psnr_list = []
 ssim_list = []

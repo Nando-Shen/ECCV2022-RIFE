@@ -82,7 +82,7 @@ class ATD12k(Dataset):
             img0 = images[0]
             img1 = images[2]
             gt = images[1]
-            return torch.cat((img0, img1, gt), 0)
+            return torch.cat((img0, img1, gt), 0), self.data_list[index][3]
 
     def __len__(self):
         if self.training:

@@ -122,6 +122,9 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
             psnr_list.append(psnr)
             psnr = -10 * math.log10(torch.mean((merged_img[j] - gt[j]) * (merged_img[j] - gt[j])).cpu().data)
             psnr_list_teacher.append(psnr)
+            pp = self.transform(preds[j])
+            os.makedirs('/home/jiaming/rife'+ '/{}'.format(dir[j]), exist_ok=True)
+            pp.save('/home/jiaming/rife' + '/{}/rife.png'.format(dir[j]))
         MSE_val = MSE_LossFn(pred, gt)
         psnrr += (10 * math.log10(1 / MSE_val.item()))
         ssim += ssim_matlab(gt.clamp(0, 1), pred.clamp(0, 1), val_range=1.)
@@ -135,10 +138,6 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
                 imgs = np.concatenate((merged_img[j], pred[j], gt[j]), 1)[:, :, ::-1]
                 writer_val.add_image(str(j) + '/img', imgs.copy(), nr_eval, dataformats='HWC')
                 writer_val.add_image(str(j) + '/flow', flow2rgb(flow0[j][:, :, ::-1]), nr_eval, dataformats='HWC')
-        for id in range(pred.size()[0]):
-            pp = self.transform(preds[id])
-            os.makedirs('/home/jiaming/rife'+ '/{}'.format(dir[id]), exist_ok=True)
-            pp.save('/home/jiaming/rife' + '/{}/rife.png'.format(dir[id]))
 
     # eval_time_interval = time.time() - time_stamp
 

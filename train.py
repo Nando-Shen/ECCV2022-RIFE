@@ -122,7 +122,7 @@ def evaluate(model, val_data, nr_eval, local_rank, writer_val):
             psnr_list.append(psnr)
             psnr = -10 * math.log10(torch.mean((merged_img[j] - gt[j]) * (merged_img[j] - gt[j])).cpu().data)
             psnr_list_teacher.append(psnr)
-            pp = self.transform(preds[j])
+            pp = transform(preds[j])
             os.makedirs('/home/jiaming/rife'+ '/{}'.format(dir[j]), exist_ok=True)
             pp.save('/home/jiaming/rife' + '/{}/rife.png'.format(dir[j]))
         MSE_val = MSE_LossFn(pred, gt)
